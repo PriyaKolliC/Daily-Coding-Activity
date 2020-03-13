@@ -1,0 +1,44 @@
+Question:
+	* Given an array of strings "products" and a string "searchWord". 
+	* We want to design a system that suggests at most three product names from "products"
+	after each character of "searchWord" is typed. 
+	* Suggested products should have common prefix with the searchWord. 
+	* If there are more than three products with a common prefix return the three lexicographically minimums products.
+	* Return list of lists of the suggested products after each character of searchWord is typed. 
+
+
+Approach:
+	* First thing that comes to the mind when we see this question is that we need to implement the search
+	using prefixes of searchword at each iteration.
+	* For each prefix of searchWord from length 1 to n we need to return 3 words which match with prefix 
+	of that particular length and the resultant 3 words should also be in lexicographical order.
+	* This question can be considered one of the best applications of "Trie"(prefix search tree) data structure.
+	
+	
+class Solution {
+    class Trie{
+        Trie[] prefix = new Trie[26];
+        LinkedList<String> words = new LinkedList<String>();
+    }
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        Arrays.sort(products);
+        Trie root = new Trie(), trie = root;
+        for(String p : products){
+            trie = root;
+            for(char c : p.toCharArray()){
+                if(trie.prefix[c - 'a'] == null)
+                    trie.prefix[c - 'a'] = new Trie();
+                trie = trie.prefix[c - 'a'];
+                if(trie.words.size() < 3)
+                    trie.words.add(p);
+            }
+        }
+        List<List<String>> result = new ArrayList();
+        for(char c : searchWord.toCharArray()){
+            if(root != null)
+                root = root.prefix[c - 'a'];
+            result.add(root == null ? Arrays.asList() : root.words);
+        }
+        return result;
+    }
+}

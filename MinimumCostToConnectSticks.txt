@@ -20,7 +20,8 @@ My Approach:
 	* Note: The array has to be sorted after each join of the sticks. Why?
 		Consider the example [3,6,7,8]. This array is initially sorted.
 		Join 1: [3 + 6, 7, 8] = [9, 7, 8]. The resultant array is unsorted which is why it cannot give minimum cost to join if we donot sort it again.
-		
+	* You get timelimit exceeded when we try to sort array after join using labor sorting
+	* Using heap sort to sort array just by adding resultant sum to array is efficient
 	
 class Solution {
     public int connectSticks(int[] sticks) {

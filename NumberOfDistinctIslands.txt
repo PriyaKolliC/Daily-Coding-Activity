@@ -1,0 +1,79 @@
+Question:
+	Given a non-empty 2D array grid of 0's and 1's, 
+	an island is a group of 1's (representing land) connected 4-directionally (horizontal or vertical.) 
+	You may assume all four edges of the grid are surrounded by water.
+	Count the number of distinct islands. 
+	An island is considered to be the same as another if and only if 
+	one island can be translated (and not rotated or reflected) to equal the other.
+
+	Example 1:
+		11000
+		11000
+		00011
+		00011
+		Given the above grid map, return 1.
+	Example 2:
+		11011
+		10000
+		00001
+		11011
+		Given the above grid map, return 3.
+
+	Notice that:
+		11
+		1
+		and
+		 1
+		11
+		are considered different island shapes, because we do not consider reflection / rotation.
+	Note: The length of each dimension in the given grid does not exceed 50.
+	
+My Approach:
+	* Finding number of islands is an easy problem which can be solved just by using depth first search.
+	* This question further asks to get unique islands from all the islands obtained.
+	* According to the question two islands are same if their structures can be overlapped.
+		Example:
+			In [1 1 0 0         and       [0 0 0 0
+			    0 0 0 0]                   0 0 1 1]
+				The islands [(0,0) (0,1)] are the same as [(1, 2) (1, 3)] since their structures can be overlapped.
+	* So the first thing that comes to mind is to obtain island path signatures. 
+	* Island path signatures can be obtained using both coordinates and also directions.
+		In the above example island 1 has coordinate signature = [(0,0) (0,1)] and direction signature = [start, right].
+		
+		
+	class Solution {
+    int[][] grid;
+    boolean[][] visited;
+    ArrayList<Integer> signature;
+
+    public void explore(int r, int c, int di) {
+        if (0 <= r && r < grid.length && 0 <= c && c < grid[0].length &&
+                grid[r][c] == 1 && !seen[r][c]) {
+            visited[r][c] = true;
+            signature.add(di);
+            explore(r+1, c, 1);
+            explore(r-1, c, 2);
+            explore(r, c+1, 3);
+            explore(r, c-1, 4);
+            signature.add(0);
+        }
+    }
+    public int numDistinctIslands(int[][] grid) {
+        this.grid = grid;
+        visited = new boolean[grid.length][grid[0].length];
+        Set signatures = new HashSet<ArrayList<Integer>>();
+
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                signature = new ArrayList<Integer>();
+                explore(r, c, 0);
+                //System.out.println(signature);
+                if (!signature.isEmpty()) {
+                    signatures.add(signature);
+                }
+            }
+        }
+
+        return signatures.size();
+    }
+}

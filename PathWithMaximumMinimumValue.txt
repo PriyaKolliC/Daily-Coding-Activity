@@ -1,0 +1,55 @@
+Question:
+	* Given a matrix of integers A with R rows and C columns, 
+	find the maximum score of a path starting at [0,0] and ending at [R-1,C-1].
+	* The score of a path is the minimum value in that path.  For example, the value of the path 8 →  4 →  5 →  9 is 4.
+	* A path moves some number of times from one visited cell to any neighbouring unvisited cell in one of the 4 cardinal directions (north, east, west, south).
+
+ 
+
+Approach:
+	* Starting from [0,0] we need to record the next maximum cell we want to step on. 
+	* The next maximum cell we want to step on is any unvisited neighbor(direct or undirect neighbor) cell of starting cell.
+	* So at each instant we have to get "maximum value cell" of all unprocessed neighbors. For this we use max heap. 
+	* We add all the neighbors(direct and indirect) starting from [0,0] to max heap and keep on processing them until we hit [r - 1, c - 1]
+	
+		class Solution {	
+		public int maximumMinimumPath(int[][] A) {
+			int i = 0, j = 0, r = A.length, c = A[0].length;
+			boolean[][] visited = new boolean[r][c];
+			
+			PriorityQueue<int[]> heap = new PriorityQueue<>((a,b) -> b[2]-a[2]);
+			heap.add(new int[]{0, 0, A[0][0]});
+			visited[0][0] = true;
+			int res = A[0][0];
+			
+			while(!heap.isEmpty()){
+				int[] cur = heap.poll();
+				res = Math.min(res, cur[2]);
+				int m = cur[0], n = cur[1];
+				if(m == r - 1 && n == c - 1)
+					return res;
+				
+				if(m + 1 < r && !visited[m + 1][n]){
+					visited[m + 1][n] = true;
+					heap.add(new int[]{m + 1, n, A[m + 1][n]});
+				}
+				
+				if(m - 1 >= 0 && !visited[m - 1][n]){
+					visited[m - 1][n] = true;
+					heap.add(new int[]{m - 1, n, A[m - 1][n]});
+				}
+				
+				if(n + 1 < c && !visited[m][n + 1]){
+					visited[m][n + 1] = true;
+					heap.add(new int[]{m, n + 1, A[m][n + 1]});
+				}
+				
+				if(n - 1 >= 0 && !visited[m][n - 1]){
+					visited[m][n - 1] = true;
+					heap.add(new int[]{m, n - 1, A[m][n - 1]});
+				}
+				
+			}
+			return res;
+		}
+	}

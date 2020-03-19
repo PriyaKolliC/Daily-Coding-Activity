@@ -51,7 +51,7 @@ Question:
 			The leaves are node 4,7,8,9,10.
 			The right boundary are node 1,3,6,10. (10 is the right-most node).
 			So order them in anti-clockwise without duplicate nodes we have [1,2,4,7,8,9,10,6,3].
-Approach:
+Approach 1:
 	* Simply traverse the left boundary, then leaves and right boundary(in reverse).
 	* One point to note is cases like below might occur
 				1
@@ -113,5 +113,56 @@ Approach:
 					if(node.right != null)
 						addLeaves(node.right);
 				}
+			}
+		}
+		
+		
+Approach 2:
+	* The other approach is to do preorder traversal.
+	* With flags for each node
+		0 - root node
+		1 - left node
+		2 - right node
+		3 - all other nodes except leaf nodes
+		
+		
+		class Solution {
+			public List<Integer> boundaryOfBinaryTree(TreeNode root) {
+				List<Integer> lb = new ArrayList(), rb = new ArrayList(), leaves = new ArrayList();
+				pre_order(root, lb, rb, leaves, 0);
+				lb.addAll(leaves);
+				lb.addAll(rb);
+				return lb;
+			}
+			public void pre_order(TreeNode node, List<Integer> lb,List<Integer> rb, List<Integer> leaves, int flag){
+				if(node == null)
+					return;
+				if(flag == 1 || flag == 0)
+					lb.add(node.val);
+				else if(flag == 2)
+					rb.add(0, node.val);
+				else if(isLeaf(node))
+					leaves.add(node.val);
+				
+				pre_order(node.left, lb, rb, leaves, left_flag(node, flag));
+				pre_order(node.right, lb, rb, leaves, right_flag(node, flag));
+			}
+			public boolean isLeaf(TreeNode node){
+				return node.left == null && node.right == null;
+			}
+			public int right_flag(TreeNode node, int flag){
+				if(flag == 2 || flag == 0)
+					return 2;
+				if(flag == 1 && node.left == null)
+					return 1;
+				return 3;
+			}
+			public int left_flag(TreeNode node, int flag){
+				if(flag == 1 || flag == 0)
+					return 1;
+				if(flag == 2 && node.right == null)
+					return 2;
+				return 3;
+				
 			}
 		}

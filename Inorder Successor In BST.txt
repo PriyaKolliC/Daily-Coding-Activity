@@ -1,0 +1,61 @@
+Question:
+	* Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
+	* The successor of a node p is the node with the smallest key greater than p.val.
+		Example 1:
+			Input: root = [2,1,3], p = 1
+			Output: 2
+			Explanation: 1's in-order successor node is 2. Note that both p and the return value is of TreeNode type.
+		Example 2:
+			Input: root = [5,3,6,2,4,null,null,1], p = 6
+			Output: null
+			Explanation: There is no in-order successor of the current node, so the answer is null.
+		Note:
+			If the given node has no in-order successor in the tree, return null.
+			It's guaranteed that the values of the tree are unique.
+			
+Approach:
+	* Inorder is "Left Root Right"
+	* So for a given node if the right branch exists then the successor is in the right node.
+	* Else the successor is somewhere in the tree. 
+	* This successor will be the total upper root of the subtree in which this node is present. 
+								24
+							18		32
+						12		16
+	* So if we see the above example 16 doesn't have a right node. 
+	* Inorder successor of the node with value 16 will be main root of subtree in which 16 is present.
+	* 16 is in the subtree of main root 24. So 24 is the successor of 16.
+	* We achieve this by doing inorder traversal.
+	/**
+	 * Definition for a binary tree node.
+	 * public class TreeNode {
+	 *     int val;
+	 *     TreeNode left;
+	 *     TreeNode right;
+	 *     TreeNode(int x) { val = x; }
+	 * }
+	 */
+	class Solution {
+		public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+			if(p.right != null){
+				p = p.right;
+				while(p.left != null)
+					p = p.left;
+				return p;
+			}
+			ArrayDeque<TreeNode> stack = new ArrayDeque<>();
+			int inorder = Integer.MIN_VALUE;
+			
+			while(!stack.isEmpty() || root != null){
+				while(root != null){
+					stack.push(root);
+					root = root.left;
+				}
+				root = stack.pop();
+				if(inorder == p.val)
+					return root;
+				inorder = root.val;
+				root = root.right;
+			}
+			return null;
+		}
+	}
